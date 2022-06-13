@@ -1,6 +1,7 @@
 package com.example.kingsnack
 
 import androidx.compose.runtime.Composable
+import com.example.kingsnack.ui.components.KingsnackScaffold
 import com.example.kingsnack.ui.theme.KingSnackTheme
 
 /**
@@ -12,6 +13,14 @@ import com.example.kingsnack.ui.theme.KingSnackTheme
 fun KingsnackApp() {
     KingSnackTheme {
         val appState = rememberKingsnackAppState()
-//
+        KingsnackScaffold(
+            bottomBar = {
+                if(appState.shouldShowBottomBar){
+
+                }
+            }
+        ) {
+
+        }
     }
 }
