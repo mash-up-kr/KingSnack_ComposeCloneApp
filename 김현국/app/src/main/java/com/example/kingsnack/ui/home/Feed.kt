@@ -95,9 +95,11 @@ fun SnackCollectionList(
         enter = slideInVertically() + expandVertically(
             expandFrom = Alignment.Top
         ) + fadeIn(initialAlpha = 0.3f),
-        exit = slideOutVertically()  + shrinkVertically() + fadeOut()
+        exit = slideOutVertically() + shrinkVertically() + fadeOut()
     ) {
-
+        FilterScreen(
+            onDismiss = { filtersVisible = false }
+        )
     }
 }
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -18,8 +19,10 @@ import androidx.compose.ui.window.Dialog
 import com.example.kingsnack.R
 import com.example.kingsnack.model.Filter
 import com.example.kingsnack.model.SnackRepo
+import com.example.kingsnack.model.filters
 import com.example.kingsnack.ui.components.FilterChip
 import com.example.kingsnack.ui.components.KingsnackScaffold
+import com.example.kingsnack.ui.theme.KingSnackTheme
 import com.example.kingsnack.ui.theme.KingsnackColorTheme
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
@@ -61,7 +64,7 @@ fun FilterScreen(
                     actions = {
                         var resetEnabled = sortState != defaultFilter
                         IconButton(
-                            onClick = { /*TODO*/ },
+                            onClick = { /*TODO*/ }, // Reset action
                             enabled = resetEnabled
                         ) {
                             val alpha = if (resetEnabled) {
@@ -87,7 +90,29 @@ fun FilterScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 24.dp, vertical = 16.dp),
             ) {
+                SortFiltersSection(
+                    sortState = sortState, onFilterChange = { filter ->
+                        sortState = filter.name
+                    }
+                )
+                FilterChipSection(
+                    title = stringResource(id = R.string.price),
+                    filters = priceFilter
+                )
+                FilterChipSection(
+                    title = stringResource(id = R.string.category),
+                    filters = categoryFilters
+                )
+                MaxCalories(
+                    sliderPosition = maxCalories, onValueChanged = { newValue ->
+                        maxCalories = newValue
+                    }
+                )
 
+                FilterChipSection(
+                    title = stringResource(id = R.string.lifestyle),
+                    filters = lifeStyleFilters
+                )
 //
             }
         }
@@ -95,9 +120,38 @@ fun FilterScreen(
 }
 
 @Composable
+fun MaxCalories(sliderPosition: Float, onValueChanged: (Float) -> Unit) {
+    FlowRow {
+        FilterTitle(text = stringResource(id = R.string.max_calories))
+        Text(
+            text = stringResource(id = R.string.per_serving),
+            style = MaterialTheme.typography.body2,
+            color = KingsnackColorTheme.colors.brand,
+            modifier = Modifier.padding(top = 5.dp, start = 10.dp)
+        )
+    }
+    Slider(
+        value = sliderPosition, onValueChange = { newValue ->
+            onValueChanged(newValue)
+        },
+        valueRange = 0f..300f,
+        steps = 5,
+        modifier = Modifier.fillMaxWidth(),
+        colors = SliderDefaults.colors(
+            thumbColor = KingsnackColorTheme.colors.brand,
+            activeTrackColor = KingsnackColorTheme.colors.brand
+        )
+    )
+}
+
+@Composable
 fun SortFiltersSection(sortState: String, onFilterChange: (Filter) -> Unit) {
     FilterTitle(text = stringResource(id = R.string.sort))
     Column(Modifier.padding(bottom = 24.dp)) {
+        SortFilters(
+            sortState = sortState,
+            onChanged = onFilterChange
+        )
     }
 }
 
@@ -108,6 +162,9 @@ fun SortFilters(
     onChanged: (Filter) -> Unit
 ) {
     sortFilters.forEach { filter ->
+        SortOption(
+            text = filter.name, icon = filter.icon, onClickOption = { onChanged(filter) }, selected = sortState == filter.name
+        )
     }
 }
 
@@ -123,7 +180,23 @@ fun SortOption(
             .padding(top = 14.dp)
             .selectable(selected) { onClickOption() }
     ) {
-
+        if (icon != null) {
+            Icon(imageVector = icon, contentDescription = null)
+        }
+        Text(
+            text = text,
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .weight(1f)
+        )
+        if (selected) {
+            Icon(
+                imageVector = Icons.Filled.Done,
+                contentDescription = null,
+                tint = KingsnackColorTheme.colors.brand
+            )
+        }
     }
 }
 
@@ -158,5 +231,7 @@ fun FilterTitle(text: String) {
 @Preview("filter screen")
 @Composable
 fun FilterScreenPreview() {
-    FilterScreen(onDismiss = {})
+    KingSnackTheme() {
+        FilterScreen(onDismiss = {})
+    }
 }
