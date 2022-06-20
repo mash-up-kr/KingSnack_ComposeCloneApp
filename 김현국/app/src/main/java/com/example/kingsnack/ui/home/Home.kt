@@ -41,6 +41,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.kingsnack.R
 import com.example.kingsnack.ui.components.KingsnackSurface
+import com.example.kingsnack.ui.home.cart.Cart
 import com.example.kingsnack.ui.home.search.Search
 import com.example.kingsnack.ui.theme.KingSnackTheme
 import com.example.kingsnack.ui.theme.KingsnackColorTheme
@@ -62,10 +63,10 @@ fun NavGraphBuilder.addHomeGraph(
         Search(onSnackClick = { id -> onSnackSelected(id, from) }, modifier = modifier)
     }
     composable(HomeSections.CART.route) { from ->
-
-
+        Cart(onSnackClick = { id -> onSnackSelected(id, from) }, modifier = modifier)
     }
     composable(HomeSections.PROFILE.route) { from ->
+        Profile(modifier)
     }
 }
 enum class HomeSections(
